@@ -32,6 +32,7 @@ NSString * const RKRequestCacheDateHeaderKey = @"X-RESTKIT-CACHEDATE";
 NSString * const RKRequestCacheStatusCodeHeadersKey = @"X-RESTKIT-CACHED-RESPONSE-CODE";
 NSString * const RKRequestCacheMIMETypeHeadersKey = @"X-RESTKIT-CACHED-MIME-TYPE";
 NSString * const RKRequestCacheURLHeadersKey = @"X-RESTKIT-CACHED-URL";
+NSString * const RKRequestCacheEncodingNameKey = @"X-RESTKIT-CACHED-ENCODING-NAME";
 
 static NSDateFormatter* __rfc1123DateFormatter;
 
@@ -122,6 +123,8 @@ static NSDateFormatter* __rfc1123DateFormatter;
                 // Cache MIME Type
                 [headers setObject:urlResponse.MIMEType
                             forKey:RKRequestCacheMIMETypeHeadersKey];
+                // Cache encoding Name
+                [headers setObject:urlResponse.textEncodingName forKey:RKRequestCacheEncodingNameKey];
                 // Cache URL
                 [headers setObject:[urlResponse.URL absoluteString]
                             forKey:RKRequestCacheURLHeadersKey];

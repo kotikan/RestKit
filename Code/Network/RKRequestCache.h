@@ -68,6 +68,9 @@ extern NSString * const RKRequestCacheMIMETypeHeadersKey;
 /** The key for accessing the URL of the cached request. **/
 extern NSString * const RKRequestCacheURLHeadersKey;
 
+/** The key for accessing the character encoding of the cached request **/
+extern NSString * const RKRequestCacheEncodingNameKey;
+
 /**
  Stores and retrieves cache entries for RestKit request objects.
  */

@@ -256,7 +256,11 @@ return __VA_ARGS__;                                                             
 }
 
 - (NSString *)bodyEncodingName {
-    return [_httpURLResponse textEncodingName];
+    if (_httpURLResponse) {
+        return [_httpURLResponse textEncodingName];
+    } else {
+        return [_responseHeaders objectForKey:RKRequestCacheEncodingNameKey];
+    }
 }
 
 - (NSStringEncoding)bodyEncoding {
