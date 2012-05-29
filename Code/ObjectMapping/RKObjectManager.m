@@ -315,6 +315,17 @@ static dispatch_queue_t defaultMappingQueue = nil;
     [loader send];
 }
 
+- (BOOL)loadObjectsReturnInstantlyIfCacheHitAtResourcePath:(NSString*)resourcePath 
+                                                usingBlock:(void(^)(RKObjectLoader *))block {
+	RKObjectLoader* loader = [self loaderWithResourcePath:resourcePath];
+	loader.method = RKRequestMethodGET;
+    
+    // Yield to the block for setup
+    block(loader);
+    
+	return [loader sendOrReturnInstantlyIfCacheHit];
+}
+
 - (void)sendObject:(id<NSObject>)object toResourcePath:(NSString *)resourcePath usingBlock:(void(^)(RKObjectLoader *))block {
     RKObjectLoader *loader = [self loaderForObject:object method:RKRequestMethodInvalid];
     loader.URL = [self.baseURL URLByAppendingResourcePath:resourcePath];

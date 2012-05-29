@@ -432,6 +432,22 @@ RKRequestMethod RKRequestMethodTypeFromName(NSString *methodName) {
     }
 }
 
+- (BOOL)sendOrReturnInstantlyIfCacheHit {
+    NSAssert(NO == _isLoading || NO == _isLoaded, @"Cannot send a request that is loading or loaded without resetting it first.");
+    if ([self shouldLoadFromCache]) {
+        RKResponse* response = [self loadResponseFromCache];
+        _isLoading = YES;
+        [self didFinishLoad:response];
+        return YES;
+    }
+    if (self.queue) {
+        [self.queue addRequest:self];
+    } else {
+        [self sendAsynchronously];
+    }
+    return NO;
+}
+
 - (void)fireAsynchronousRequest {
     RKLogDebug(@"Sending asynchronous %@ request to URL %@.", [self HTTPMethod], [[self URL] absoluteString]);
     if (![self prepareURLRequest]) {

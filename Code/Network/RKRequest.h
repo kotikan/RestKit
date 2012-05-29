@@ -605,6 +605,13 @@ typedef void(^RKRequestDidFailLoadWithErrorBlock)(NSError *error);
 - (void)send;
 
 /**
+ If there is a valid cached version, call back instantly and return YES.
+ Otherwise, send the request asynchronously. It will be added to the queue and dispatched
+ as soon as possible.
+ */
+- (BOOL)sendOrReturnInstantlyIfCacheHit;
+
+/**
  Immediately dispatch a request asynchronously, skipping the request queue.
  */
 - (void)sendAsynchronously;

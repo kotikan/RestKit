@@ -373,6 +373,8 @@ typedef enum {
  */
 - (void)loadObjectsAtResourcePath:(NSString *)resourcePath usingBlock:(RKObjectLoaderBlock)block;
 
+- (BOOL)loadObjectsReturnInstantlyIfCacheHitAtResourcePath:(NSString *)resourcePath usingBlock:(RKObjectLoaderBlock)block;
+
 /*
  Configure and send an object loader after yielding it to a block for configuration. This allows for very succinct on-the-fly
  configuration of the request without obtaining an object reference via objectLoaderForObject: and then sending it yourself.
