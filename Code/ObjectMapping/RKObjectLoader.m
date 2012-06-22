@@ -392,6 +392,9 @@
 
         [self didFinishLoad:[self.cache responseForRequest:self]];
     } else {
+        self.loaded = YES;
+        self.loading = NO;
+        
         if ([_delegate respondsToSelector:@selector(request:didFailLoadWithError:)]) {
             [_delegate request:self didFailLoadWithError:error];
         }
