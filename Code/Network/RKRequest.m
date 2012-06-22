@@ -433,10 +433,10 @@ RKRequestMethod RKRequestMethodTypeFromName(NSString *methodName) {
 }
 
 - (BOOL)sendOrReturnInstantlyIfCacheHit {
-    NSAssert(NO == _isLoading || NO == _isLoaded, @"Cannot send a request that is loading or loaded without resetting it first.");
+    NSAssert(NO == self.isLoading || NO == self.isLoaded, @"Cannot send a request that is loading or loaded without resetting it first.");
     if ([self shouldLoadFromCache]) {
         RKResponse* response = [self loadResponseFromCache];
-        _isLoading = YES;
+        self.loading = YES;
         [self didFinishLoad:response];
         return YES;
     }
