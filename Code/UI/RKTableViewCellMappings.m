@@ -22,11 +22,13 @@
 
 @implementation RKTableViewCellMappings
 
-+ (id)cellMappings {
++ (id)cellMappings
+{
     return [[self new] autorelease];
 }
 
-- (id)init {
+- (id)init
+{
     self = [super init];
     if (self) {
         _cellMappings = [NSMutableDictionary new];
@@ -35,23 +37,26 @@
     return self;
 }
 
-- (void)setCellMapping:(RKTableViewCellMapping*)cellMapping forClass:(Class)objectClass {
+- (void)setCellMapping:(RKTableViewCellMapping *)cellMapping forClass:(Class)objectClass
+{
     if ([_cellMappings objectForKey:objectClass]) {
         @throw [NSException exceptionWithName:NSInvalidArgumentException
                                        reason:[NSString stringWithFormat:@"A tableViewCell mapping has already been registered for objects of type '%@'", NSStringFromClass(objectClass)]
                                      userInfo:nil];
     }
 
-    [_cellMappings setObject:cellMapping forKey:objectClass];
+    [_cellMappings setObject:cellMapping forKey:NSStringFromClass(objectClass)];
 }
 
-- (RKTableViewCellMapping*)cellMappingForClass:(Class)objectClass {
+- (RKTableViewCellMapping *)cellMappingForClass:(Class)objectClass
+{
     // Exact match
-    RKTableViewCellMapping* cellMapping = [_cellMappings objectForKey:objectClass];
+    RKTableViewCellMapping *cellMapping = [_cellMappings objectForKey:NSStringFromClass(objectClass)];
     if (cellMapping) return cellMapping;
 
     // Subclass match
-    for (Class cellClass in _cellMappings) {
+    for (NSString *cellClassName in _cellMappings) {
+        Class cellClass = NSClassFromString(cellClassName);
         if ([objectClass isSubclassOfClass:cellClass]) {
             return [_cellMappings objectForKey:cellClass];
         }
@@ -60,11 +65,12 @@
     return nil;
 }
 
-- (RKTableViewCellMapping*)cellMappingForObject:(id)object {
+- (RKTableViewCellMapping *)cellMappingForObject:(id)object
+{
     if ([object respondsToSelector:@selector(cellMapping)]) {
         // TODO: Trace logging...
         // TODO: This needs unit test coverage on the did select row case...
-        RKTableViewCellMapping* cellMapping = [object cellMapping];
+        RKTableViewCellMapping *cellMapping = [object cellMapping];
         if (cellMapping) return [object cellMapping];
     }
 

@@ -24,7 +24,8 @@
 
 @implementation RKObjectRouter
 
-- (id)init {
+- (id)init
+{
     if ((self = [super init])) {
         _routes = [[NSMutableDictionary alloc] init];
     }
@@ -32,19 +33,21 @@
     return self;
 }
 
-- (void)dealloc {
+- (void)dealloc
+{
     [_routes release];
     [super dealloc];
 }
 
-- (void)routeClass:(Class)theClass toResourcePathPattern:(NSString *)resourcePathPattern forMethodName:(NSString *)methodName escapeRoutedPath:(BOOL)addEscapes {
+- (void)routeClass:(Class)theClass toResourcePathPattern:(NSString *)resourcePathPattern forMethodName:(NSString *)methodName escapeRoutedPath:(BOOL)addEscapes
+{
     NSString *className = NSStringFromClass(theClass);
-    if (nil == [_routes objectForKey:theClass]) {
+    if (nil == [_routes objectForKey:className]) {
         NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-        [_routes setObject:dictionary forKey:theClass];
+        [_routes setObject:dictionary forKey:className];
     }
 
-    NSMutableDictionary *classRoutes = [_routes objectForKey:theClass];
+    NSMutableDictionary *classRoutes = [_routes objectForKey:className];
     if ([classRoutes objectForKey:methodName]) {
     [NSException raise:nil format:@"A route has already been registered for class '%@' and HTTP method '%@'", className, methodName];
     }
@@ -55,7 +58,8 @@
     [classRoutes setValue:routeEntry forKey:methodName];
 }
 
-- (NSString *)HTTPVerbForMethod:(RKRequestMethod)method {
+- (NSString *)HTTPVerbForMethod:(RKRequestMethod)method
+{
     switch (method) {
         case RKRequestMethodGET:
             return @"GET";
@@ -77,39 +81,45 @@
 
 // Public
 
-- (void)routeClass:(Class)theClass toResourcePathPattern:(NSString *)resourcePathPattern {
+- (void)routeClass:(Class)theClass toResourcePathPattern:(NSString *)resourcePathPattern
+{
     [self routeClass:theClass toResourcePathPattern:resourcePathPattern forMethodName:@"ANY" escapeRoutedPath:YES];
 }
 
-- (void)routeClass:(Class)theClass toResourcePathPattern:(NSString *)resourcePath forMethod:(RKRequestMethod)method {
+- (void)routeClass:(Class)theClass toResourcePathPattern:(NSString *)resourcePath forMethod:(RKRequestMethod)method
+{
     [self routeClass:theClass toResourcePath:resourcePath forMethod:method escapeRoutedPath:YES];
 }
 
-- (void)routeClass:(Class)theClass toResourcePathPattern:(NSString *)resourcePath forMethod:(RKRequestMethod)method escapeRoutedPath:(BOOL)addEscapes {
+- (void)routeClass:(Class)theClass toResourcePathPattern:(NSString *)resourcePath forMethod:(RKRequestMethod)method escapeRoutedPath:(BOOL)addEscapes
+{
     NSString *methodName = [self HTTPVerbForMethod:method];
     [self routeClass:theClass toResourcePathPattern:resourcePath forMethodName:methodName escapeRoutedPath:addEscapes];
 }
 
 #pragma mark RKRouter
 
-- (NSString *)resourcePathForObject:(NSObject *)object method:(RKRequestMethod)method {
+- (NSString *)resourcePathForObject:(NSObject *)object method:(RKRequestMethod)method
+{
     NSString *methodName = [self HTTPVerbForMethod:method];
     NSString *className  = NSStringFromClass([object class]);
     NSDictionary *classRoutes = nil;
 
     // Check for exact matches
-    for (Class possibleClass in _routes) {
+    for (NSString *possibleClassName in _routes) {
+        Class possibleClass = NSClassFromString(possibleClassName);
         if ([object isMemberOfClass:possibleClass]) {
-            classRoutes = [_routes objectForKey:possibleClass];
+            classRoutes = [_routes objectForKey:possibleClassName];
             break;
         }
     }
 
     // Check for superclass matches
     if (! classRoutes) {
-        for (Class possibleClass in _routes) {
+        for (NSString *possibleClassName in _routes) {
+            Class possibleClass = NSClassFromString(possibleClassName);
             if ([object isKindOfClass:possibleClass]) {
-                classRoutes = [_routes objectForKey:possibleClass];
+                classRoutes = [_routes objectForKey:possibleClassName];
                 break;
             }
         }
@@ -136,15 +146,18 @@
 
 @implementation RKObjectRouter (CompatibilityAliases)
 
-- (void)routeClass:(Class)objectClass toResourcePath:(NSString *)resourcePath {
+- (void)routeClass:(Class)objectClass toResourcePath:(NSString *)resourcePath
+{
     [self routeClass:objectClass toResourcePathPattern:resourcePath];
 }
 
-- (void)routeClass:(Class)objectClass toResourcePath:(NSString *)resourcePath forMethod:(RKRequestMethod)method {
+- (void)routeClass:(Class)objectClass toResourcePath:(NSString *)resourcePath forMethod:(RKRequestMethod)method
+{
     [self routeClass:objectClass toResourcePathPattern:resourcePath forMethod:method];
 }
 
-- (void)routeClass:(Class)objectClass toResourcePath:(NSString *)resourcePath forMethod:(RKRequestMethod)method escapeRoutedPath:(BOOL)addEscapes {
+- (void)routeClass:(Class)objectClass toResourcePath:(NSString *)resourcePath forMethod:(RKRequestMethod)method escapeRoutedPath:(BOOL)addEscapes
+{
     [self routeClass:objectClass toResourcePathPattern:resourcePath forMethod:method escapeRoutedPath:addEscapes];
 }
 
